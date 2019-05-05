@@ -1,0 +1,60 @@
+Personne(#id:Int, nom: String, prenom: String, email: String, mot_de_passe:String, photo: String, date_naissance: Date, lieuTravail=> LieuTravail)   
+WITH nom NOT NULL, prenom NOT NULL, email UNIQUE NOT NULL, mot_de_passe NOT NULL, date_de_naissance NOT NULL, 
+/**
+ * Nous considérons ici uniquement l'unicité de l'adresse mail en considérant que deux
+ * utilisateurs peuvent avoir le même nom, prénom et date de naissance ce qui sera
+ * potentiellement le cas parmi les utilisateurs de notre réseau social
+ */
+
+LienSocial(#personne1 => Personne, #personne2 => Personne, type: String {Ami, Collegue, Famille})
+WITH type NOT NULL
+
+LieuTravail(#nom: String, #code_postal: Int, #adresse: String, publique: Boolean, ville: String)
+
+Competence(#personne=> Personne, #intitule: String, thematique=>Thématique, niveau: Int, publique: Boolean)
+WITH niveau NOT NULL, publique NOT NULL, intitule NOT NULL
+
+Formation(#nom: String, publique: Boolean) WITH publique NOT NULL
+
+FormationPersonne(#personne=>Personne, #formation => Formation)
+
+FormationThématique(#formation=>Formation, #thématique=> Thématique)
+
+Thématique(#Nom : String, description: string)
+
+Groupe(#nom: String, thematique=>Thématique, parent=>Groupe) 
+WITH Thematique NOT NULL
+
+PersonneDansGroupe(#personne=>Personne, #groupe=>Groupe)
+Projection(PersonneDansGroupe, personne) != NULL
+
+Audio (#url_Audio: String) 
+
+Texte (#id: Int, contenu: String) WITH contenu NOT NULL
+/**
+ * Nous considérons qu'il est possible que deux posts avec le même contenu soit posté.
+ */
+
+Video (#url_video:String) 
+
+Image (#url_image: String, hauteur: Int, largeur: Int) 
+
+PersonneAimePost(#aimé_par=> Personne, #post=> Post) WITH aimé_par NOT NULL, post NOT NULL
+
+Commentaire(#id: Integer, date: Date, contenu: String, posté_par=>Personne, post_commenté=>Post, commentaire_commenté=>Commentaire) WITH date NOT NULL, contenu NOT NULL, posté_par NOT NULL, post_commenté NOT NULL
+ /**
+ * Nous considérons que les utilisateurs peuvent poster deux fois un commentaire
+ * identique sur le même post avec le même commentaire parent.
+ * Il s'agit d'un choix.
+ */
+
+DossierThématique(#nom: String, #personne=>Personne, publique: Boolean) 
+WITH publique NOT NULL
+
+PostDansDossier(#Dossier=>DossierThématique, #post=>Post)
+
+Post(#id: Int, Titre: String, id_texte=>Texte, id_audio=>Audio, id_video=> Video, id_image=> Image, posté_par=> Personne, appartient_à=>Groupe, titre: String, date: Date, publique: Boolean, ami: Boolean, collègue: Boolean, famille: Boolean) WITH id_texte XOR id_audio XOR id_video XOR id_image NOT NULL, posté_par NOT NULL, titre NOT NULL, date NOT NULL
+Projection(Post, id_texte) = Projection(texte, id)
+Projection(Post, id_image) = Projection(image, url_image)
+Projection(Post, id_video) = Projection(video, url_video)
+Projection(Post, id_audio) = Projection(audio, url_Audio)

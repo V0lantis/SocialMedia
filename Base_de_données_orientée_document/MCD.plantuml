@@ -1,0 +1,115 @@
+@startuml mcd
+
+class Personne {
+  nom: String
+  prenom: String
+  email: String
+  mot_de_passe: String
+  photo: String
+  date_naissance: Date
+}
+
+class LieuTravail {
+  nom: String
+  ville: String
+  code_postal: Int
+  adresse: String
+  publique: Boolean
+}
+note right: {(nom,adresse,code_postal) key}
+
+class Formation {
+  nom: String {key}
+  publique: Boolean
+}
+
+class Competence {
+  intitule : String
+  niveau: Int
+  publique: Boolean
+}
+
+class Thematique {
+  nom: String {key}
+  description: String
+}
+
+class Groupe {
+  nom: String {key}
+}
+
+
+class LienSocial {
+  type: String{Ami, Collegue, Famille}
+}
+
+abstract class Post {
+  titre: String
+  date: Date
+  publique: Boolean
+  ami: Boolean
+  collègue: Boolean
+  famille: Boolean
+}
+
+class Texte{
+  contenu: String
+}
+
+class Video{
+  qualité: String
+  durée: Int
+  url_video: String
+}
+
+class Image{
+  hauteur: Int
+  largeur: Int
+  url_image: String
+}
+
+class Audio{
+  url_audio: String
+}
+
+class DossierThématique {
+  nom: String
+  publique: Boolean
+}
+
+class Commentaire {
+  contenu: String
+  date: Date
+}
+
+Personne  *-- "*" Post: poste >
+Personne  *-- "*" Post: aime >
+Personne "1" -up- "*" Commentaire: écrit >
+Commentaire "*" -* Post: sur >
+
+Personne  *- "*" Personne
+(Personne, Personne) . LienSocial: est lié
+
+Commentaire "0..1" -- "*" Commentaire: Parent de
+
+Personne "*" -- "*" Groupe: fait partie de >
+Personne  *- "  *" DossierThématique: possède >
+
+Groupe  *-- "*" Post: appartient à <
+Groupe "0..1" --  Thematique: porte sur >
+Groupe "*" --* Groupe: sous groupe de
+
+Post "*" -left-- "*" DossierThématique : contient <
+
+Thematique "1..*" o-right- "*" Formation: a pour <
+Thematique "1..*" o-down- "*" Competence: porte sur <
+
+Texte -up-|> Post
+Video -up-|> Post
+Image -up-|> Post
+Audio -up-|> Post
+
+LieuTravail "0..1" -down- "*" Personne: travaille à <
+Formation "*" --* Personne
+Competence "*" --* Personne
+@enduml

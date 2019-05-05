@@ -1,0 +1,5 @@
+"Pour ma part j'utilise la structure sigaction, cela te permet de redefinir l'effet du signal qui sera capter.",18,3,
+"Une fois que tu as declarer ta variable de type struct sigaction, n'oublie pas de changer son handler avec la fonction que tu souhaite executer.",4,3,1
+"Merci !! C'est bon ca marche maintenant.",5,3,2
+"Super l'image, je la met en fond d'écran.",17,2,
+"Grave cool la musique !",10,5,
